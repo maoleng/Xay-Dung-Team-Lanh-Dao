@@ -17,7 +17,7 @@ class Post extends Model
         'title', 'content', 'banner', 'likes', 'views',
     ];
 
-    public function likes(): BelongsToMany
+    public function likers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'post_user', 'post_id', 'user_id');
     }

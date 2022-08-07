@@ -13,10 +13,23 @@ class PostController extends Controller
     public function index(): array
     {
         $posts = Post::query()
+            ->with('likers', function ($q) {
+                $q->where('id', c('authed')->id);
+            })
             ->orderBy('created_at', 'DESC')
             ->orderBy('id', 'DESC')
             ->get(['id', 'title', 'banner', 'likes', 'views', 'created_at']);
-
+        $posts = $posts->map(static function ($post) {
+            return [
+                'id' => $post->id,
+                'title' => $post->title,
+                'banner' => $post->banner,
+                'views' => $post->views,
+                'likes' => $post->likes,
+                'if_liked' => !$post->likers->isEmpty(),
+                'created_at' => $post->created_at,
+            ];
+        });
         return [
             'status' => true,
             'data' => $posts

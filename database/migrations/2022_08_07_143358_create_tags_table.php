@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 250);
+            $table->string('color', 20)->default('white');
             $table->timestamps();
         });
     }

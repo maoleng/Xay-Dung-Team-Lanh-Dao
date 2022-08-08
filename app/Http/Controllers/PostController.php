@@ -10,12 +10,21 @@ use JetBrains\PhpStorm\ArrayShape;
 class PostController extends Controller
 {
     #[ArrayShape(['status' => "bool", 'data' => "\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection"])]
-    public function index(): array
+    public function index(Request $request): array
     {
+        $limit = $request->get('limit');
+        $order_by = $request->get('order_by');
         $posts = Post::query()
             ->with('likers', function ($q) {
                 $q->where('id', c('authed')->id);
-            })
+            });
+        if (isset($limit)) {
+            $posts->limit($limit);
+        }
+        if (isset($order_by)) {
+            $posts->orderBy($order_by, 'DESC');
+        }
+        $posts = $posts
             ->orderBy('created_at', 'DESC')
             ->orderBy('id', 'DESC')
             ->get(['id', 'title', 'banner', 'likes', 'views', 'created_at']);
@@ -27,7 +36,7 @@ class PostController extends Controller
                 'views' => $post->views,
                 'likes' => $post->likes,
                 'if_liked' => !$post->likers->isEmpty(),
-                'created_at' => $post->created_at,
+                'created_at' => $post->created_at->format('d-m-Y H:i:s'),
             ];
         });
         return [

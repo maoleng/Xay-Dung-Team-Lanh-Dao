@@ -9,7 +9,7 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class PostController extends Controller
 {
-    #[ArrayShape(['status' => "bool", 'data' => "\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection"])]
+    #[ArrayShape(['status' => "bool", 'data' => "mixed", 'views' => "\Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed"])]
     public function index(Request $request): array
     {
         $limit = $request->get('limit');
@@ -39,9 +39,11 @@ class PostController extends Controller
                 'created_at' => $post->created_at->format('d-m-Y H:i:s'),
             ];
         });
+
         return [
             'status' => true,
-            'data' => $posts
+            'data' => $posts,
+            'views' => increaseViews()
         ];
     }
 
@@ -51,7 +53,8 @@ class PostController extends Controller
         if (empty($post)) {
             return [
                 'status' => false,
-                'message' => 'Không tìm thấy bài viết'
+                'message' => 'Không tìm thấy bài viết',
+                'views' => increaseViews()
             ];
         }
         $post->increment('views');
@@ -73,7 +76,8 @@ class PostController extends Controller
                 'likes' => $post->likes,
                 'views' => $post->views,
                 'if_liked' => $if_liked
-            ]
+            ],
+            'views' => increaseViews(),
         ];
 
     }
@@ -84,7 +88,8 @@ class PostController extends Controller
         if (empty($post)) {
             return [
                 'status' => false,
-                'message' => 'Không tìm thấy bài viết'
+                'message' => 'Không tìm thấy bài viết',
+                'views' => increaseViews(),
             ];
         }
         $user = c('authed');
@@ -101,18 +106,20 @@ class PostController extends Controller
 
         return [
             'status' => true,
-            'data' => $post
+            'data' => $post,
+            'views' => increaseViews(),
         ];
 
     }
 
-    #[ArrayShape(['status' => "bool"])]
+    #[ArrayShape(['status' => "bool", 'views' => "\Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed"])]
     public function store(StorePostRequest $request): array
     {
         Post::query()->create($request->validated());
 
         return [
             'status' => true,
+            'views' => increaseViews(),
         ];
     }
 }

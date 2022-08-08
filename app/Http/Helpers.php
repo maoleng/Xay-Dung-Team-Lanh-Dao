@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Page;
 use Illuminate\Support\Facades\App;
 
 if (function_exists('c')) {
@@ -8,5 +9,13 @@ if (function_exists('c')) {
     function c(string $key)
     {
         return App::make($key);
+    }
+}
+
+if (!function_exists('increaseViews')) {
+    function increaseViews()
+    {
+        Page::query()->first()->increment('views');
+        return Page::query()->first()->views;
     }
 }

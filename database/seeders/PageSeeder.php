@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Page;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class UserSeeder extends Seeder
+class PageSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +15,8 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        //
+        Page::query()->create([
+            'views' => 1159,
+        ]);
     }
 }

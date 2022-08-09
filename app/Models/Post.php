@@ -43,7 +43,7 @@ class Post extends Model
                     ->second($second)
                 ;
             } else {
-                $model->created_at = Carbon::make('2022-07-03')
+                $model->created_at = Carbon::make('2022-07-10')
                     ->hour($hour)
                     ->minute($minute)
                     ->second($second);
